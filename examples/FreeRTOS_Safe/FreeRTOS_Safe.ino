@@ -38,7 +38,7 @@ void setup() {
         while (true) delay(1000);
     }
 
-    led.setBrightness(100);
+    led.setBrightnessPercent(40);
     led.enableMutex(); // enable thread safety before creating tasks
 
     xTaskCreatePinnedToCore(taskStatus, "Status", 4096, NULL, 1, NULL, 1);

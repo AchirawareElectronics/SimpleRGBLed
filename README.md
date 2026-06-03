@@ -7,7 +7,8 @@ Standalone WS2812 RGB LED driver for ESP32. **Zero external dependencies** — d
 - **No dependencies** — does not require FastLED, Adafruit NeoPixel, or any other library
 - **Named colors** — 47 built-in colors in English and Spanish (case-insensitive)
 - **Multiple color modes** — set by name, RGB values, or hex code
-- **Brightness control** — global brightness without modifying color values
+- **Brightness control** — `setBrightnessPercent(0-100)` with optional per-channel gamma correction (enabled by default)
+- **Gamma correction** — per-channel curves (R γ2.2, G γ2.8, B γ2.5) for perceptually uniform colors
 - **Blink patterns** — built-in blink function with configurable timing
 - **FreeRTOS safe** — optional mutex for multi-task environments
 - **Up to 16 LEDs** — configurable via `SIMPLE_RGB_MAX_LEDS`
@@ -50,7 +51,7 @@ SimpleRGBLed led;
 
 void setup() {
     led.begin(LED_PIN);
-    led.setBrightness(128);
+    led.setBrightnessPercent(50); // 50% brightness
 }
 
 void loop() {
@@ -73,7 +74,11 @@ void loop() {
 |--------|-------------|
 | `SimpleRGBLed(numLeds)` | Constructor. Default: 1 LED |
 | `begin(pin)` | Initialize on GPIO pin. Returns `true` on success |
-| `setBrightness(0-255)` | Set global brightness |
+| `setBrightnessPercent(0-100)` | Set global brightness in percent |
+| `getBrightnessPercent()` | Get current brightness percent |
+| `setBrightness(0-255)` | Legacy brightness API (maps to percent) |
+| `enableGammaCorrection(true/false)` | Enable or disable gamma correction (default: on) |
+| `isGammaCorrectionEnabled()` | Check if gamma correction is active |
 | `enableMutex()` | Enable FreeRTOS thread safety |
 
 ### Setting Colors
@@ -151,6 +156,24 @@ Define `SIMPLE_RGB_MAX_LEDS` before including the library:
 #include <SimpleRGBLed.h>
 
 SimpleRGBLed strip(64);
+```
+
+## Gamma Correction (v2.0)
+
+By default, brightness is applied with per-channel gamma correction tuned for WS2812 LEDs:
+
+| Channel | Gamma |
+|---------|-------|
+| Red     | 2.2   |
+| Green   | 2.8   |
+| Blue    | 2.5   |
+
+```cpp
+led.setBrightnessPercent(15);  // matches production tuning from hardware projects
+led.setColor("verde");
+
+led.enableGammaCorrection(false); // linear scaling, v1-style behavior
+led.setColor("verde");
 ```
 
 ## How It Works

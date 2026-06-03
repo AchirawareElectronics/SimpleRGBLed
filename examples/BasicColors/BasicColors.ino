@@ -21,7 +21,7 @@ void setup() {
         while (true) delay(1000);
     }
 
-    led.setBrightness(128); // 50% brightness
+    led.setBrightnessPercent(50); // 50% brightness
     Serial.println("SimpleRGBLed ready!");
 }
 

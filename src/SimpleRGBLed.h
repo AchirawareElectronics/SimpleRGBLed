@@ -7,7 +7,8 @@
  * Features:
  *   - Named colors in English and Spanish (case-insensitive)
  *   - Direct RGB and hex color control
- *   - Brightness adjustment
+ *   - Brightness adjustment (0-100%)
+ *   - Per-channel gamma correction (R 2.2, G 2.8, B 2.5)
  *   - Blink patterns
  *   - Optional FreeRTOS mutex for thread safety
  *
@@ -52,8 +53,14 @@ public:
     void off(uint8_t index = 0);
     void offAll();
 
+    void setBrightnessPercent(uint8_t percent);
+    uint8_t getBrightnessPercent() const;
+
     void setBrightness(uint8_t brightness);
     uint8_t getBrightness() const;
+
+    void enableGammaCorrection(bool enabled = true);
+    bool isGammaCorrectionEnabled() const;
 
     void blink(const char *colorName, uint8_t times = 3,
                uint16_t onMs = 300, uint16_t offMs = 300,
@@ -70,7 +77,8 @@ public:
 
 private:
     uint8_t _numLeds;
-    uint8_t _brightness;
+    uint8_t _brightnessPercent;
+    bool _gammaEnabled;
     uint8_t _pin;
     bool _initialized;
 
